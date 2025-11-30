@@ -5,36 +5,32 @@ KinD-based environment for testing ingress2gateway contributions.
 ## Quick Start
 
 ```bash
-# Build and start (first time takes ~3-5 min)
+# Build and start (first run takes ~3-5 min for cluster + setup)
 docker compose up -d --build
 
-# Enter the container
+# Enter the container (wait for "Ready!" message)
 docker compose exec i2gw-test bash
 
-# One-time setup: install Envoy Gateway + test services
-bash /workspace/tests/setup.sh
-
-# Run smoke tests
-bats /workspace/tests/test.bats
-
-# Run full e2e tests
+# Run tests
 bats /workspace/tests/e2e.bats
 ```
 
 ## What's Included
 
 - **KinD cluster**: `i2gw-test` (auto-created on startup)
-- **Gateway Controller**: Envoy Gateway (installed via setup.sh)
+- **Gateway Controller**: Envoy Gateway (auto-installed)
 - **Tools**: kubectl, kind, go, bats, git, make, curl
 - **Source**: `/workspace/ingress2gateway` (cloned and built)
+
+Note: First container start takes ~2-3 min (cluster creation + Envoy Gateway install). Subsequent `exec` sessions are instant.
 
 ## Test Structure
 
 ```
 tests/
-├── test.bats              # Smoke tests (run first)
+├── test.bats              # Smoke tests
 ├── e2e.bats               # Full e2e tests with traffic verification
-├── setup.sh               # Installs Envoy Gateway + test services
+├── setup.sh               # Manual setup (auto-runs on first start)
 └── fixtures/
     ├── simple-ingress.yaml
     ├── multi-path-ingress.yaml
