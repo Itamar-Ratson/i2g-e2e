@@ -1,11 +1,18 @@
 #!/usr/bin/env bats
+# Quick smoke tests - run these first
 
-@test "Verify ingress2gateway help command works" {
-  run ingress2gateway --help
-  [ "$status" -eq 0 ]
+@test "smoke: ingress2gateway binary exists" {
+    command -v ingress2gateway
 }
 
-@test "Verify we can talk to the KinD cluster" {
-  run kubectl get nodes
-  [ "$status" -eq 0 ]
+@test "smoke: kubectl binary exists" {
+    command -v kubectl
+}
+
+@test "smoke: cluster is reachable" {
+    kubectl cluster-info
+}
+
+@test "smoke: ingress2gateway help works" {
+    ingress2gateway --help
 }
