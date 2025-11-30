@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-path-ingress
+  namespace: i2gw-test
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: multipath.example.com
+      http:
+        paths:
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: echo-svc
+                port:
+                  number: 80
+          - path: /v2
+            pathType: Prefix
+            backend:
+              service:
+                name: echo-v2-svc
+                port:
+                  number: 80

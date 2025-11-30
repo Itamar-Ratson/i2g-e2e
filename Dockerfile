@@ -7,7 +7,7 @@ ENV GO_VERSION="1.23.4"
 ENV BATS_VERSION="v1.11.1"
 
 # Install packages
-RUN apk add --no-cache bash curl git make ncurses
+RUN apk add --no-cache bash curl git make ncurses jq
 
 # Install Go
 RUN curl -Lo /tmp/go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" && \
@@ -31,8 +31,16 @@ WORKDIR /workspace
 # Clone ingress2gateway
 RUN git clone --depth 1 https://github.com/kubernetes-sigs/ingress2gateway.git
 
+# Clone user's e2e test repo
+RUN git clone --depth 1 https://github.com/Itamar-Ratson/i2g-e2e.git
+
 # Build ingress2gateway
 RUN cd ingress2gateway && go build -o /usr/local/bin/ingress2gateway .
+
+# Pre-download manifests to speed up first start
+RUN mkdir -p /opt/manifests && \
+  curl -sLo /opt/manifests/gateway-api.yaml https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml && \
+  curl -sLo /opt/manifests/envoy-gateway.yaml https://github.com/envoyproxy/gateway/releases/download/v1.2.0/install.yaml
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

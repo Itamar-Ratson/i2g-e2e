@@ -6,4 +6,5 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./tests:/workspace/tests # Mount your test files
+      # Mount tests from your repo (for development)
+      - ./tests:/workspace/tests
