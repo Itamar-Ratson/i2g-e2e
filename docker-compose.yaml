@@ -1,44 +1,9 @@
-version: "3.8"
-
 services:
-  test-env:
-    # 1. Build the image using the Dockerfile in the current directory
-    build:
-      context: .
-      # Pass your personal test repo URL here for the build phase
-      args:
-        MY_TEST_REPO_URL: "https://github.com/Itamar-Ratson/i2g-e2e.git"
-
-    # 2. The critical KinD requirement: needed to run Docker inside Docker
-    privileged: true
-
-    # 3. Ensures your KinD cluster data and your BATS tests persist
-    volumes:
-      # Maps your local directory to the container's /workspace/my-tests
-      # This is where you write and save your BATS tests.
-      - ./my-k8s-tests:/workspace/my-tests
-      # This is crucial: it persists the Docker volume where KinD stores cluster data
-      - kind-data:/var/lib/docker
-
-    # 4. The magic startup command that ensures the environment is ready
-    command: >
-      sh -c "dockerd-entrypoint.sh & 
-      sleep 5; 
-      echo 'Waiting for Docker...'; 
-      until docker info >/dev/null 2>&1; do sleep 1; done; 
-      echo 'Docker is up!'; 
-      if ! kind get clusters | grep -q 'i2gw-test'; then 
-        echo 'Creating KinD cluster i2gw-test...'; 
-        kind create cluster --name i2gw-test; 
-      else 
-        echo 'KinD cluster already exists.'; 
-      fi; 
-      /bin/bash"
-
-    # 5. Makes the container interactive so you can use the terminal
+  i2gw-test:
+    build: .
+    image: i2gw-test:latest
+    privileged: true # Required for Docker-in-Docker
     stdin_open: true
     tty: true
-
-# Define the volume used for KinD data persistence
-volumes:
-  kind-data:
+    volumes:
+      - ./tests:/workspace/tests # Mount your test files
