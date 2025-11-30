@@ -3,9 +3,11 @@ FROM docker:27-dind
 # ARG allows you to pass your repo URL during build time
 ARG MY_TEST_REPO_URL
 
-# Install dependencies (Go, Git, Make, Bash, Curl, Tools for compilation)
+# Define the required Go version
+ENV GO_VERSION 1.24.1
+
+# Install dependencies needed by the project AND for Go installation
 RUN apk add --no-cache \
-  go \
   git \
   make \
   bash \
@@ -13,6 +15,14 @@ RUN apk add --no-cache \
   ncurses \
   build-base \
   openssl
+
+# Manually install the required Go version (1.24.0 or greater)
+RUN curl -LO https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
+  tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
+  rm go${GO_VERSION}.linux-amd64.tar.gz
+
+# Update the PATH to include the new Go installation
+ENV PATH="/usr/local/go/bin:${PATH}"
 
 # --- TOOL INSTALLATION ---
 
@@ -51,3 +61,11 @@ RUN if [ -z "$MY_TEST_REPO_URL" ]; then \
   else \
   git clone "$MY_TEST_REPO_URL" my-tests; \
   fi
+
+# Copy the entrypoint script
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the custom entrypoint
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["bash"]
