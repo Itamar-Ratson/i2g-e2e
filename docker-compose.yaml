@@ -7,7 +7,7 @@ services:
       context: .
       # Pass your personal test repo URL here for the build phase
       args:
-        MY_TEST_REPO_URL: "https://github.com/YOUR_USERNAME/YOUR_REPO.git"
+        MY_TEST_REPO_URL: "https://github.com/Itamar-Ratson/i2g-e2e.git"
 
     # 2. The critical KinD requirement: needed to run Docker inside Docker
     privileged: true
