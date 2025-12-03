@@ -8,7 +8,10 @@ KinD-based environment for testing ingress2gateway contributions.
 # Build and start (first run takes ~3-5 min for cluster + setup)
 docker compose up -d --build
 
-# Enter the container (wait for "Ready!" message)
+# Read logs (wait for "Ready!" message then exit with CTRL+C)
+docker compose logs -f
+
+# Enter the container
 docker compose exec i2gw-test bash
 
 # Run tests
