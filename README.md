@@ -8,10 +8,7 @@ KinD-based environment for testing ingress2gateway contributions.
 # Build and start (first run takes ~3-5 min for cluster + setup)
 docker compose up -d --build
 
-# Read logs (wait for "Ready!" message then exit with CTRL+C)
-docker compose logs -f
-
-# Enter the container
+# Enter the container (wait for "Ready!" message)
 docker compose exec i2gw-test bash
 
 # Run tests
@@ -42,7 +39,6 @@ Note: First container start takes ~2-3 min (cluster creation + Envoy Gateway ins
 └── tests/
     ├── e2e.bats               # Full e2e tests with traffic verification
     ├── test.bats              # Smoke tests
-    ├── setup.sh               # Manual setup (auto-runs on first start)
     └── fixtures/
         ├── simple-ingress.yaml
         ├── multi-path-ingress.yaml
