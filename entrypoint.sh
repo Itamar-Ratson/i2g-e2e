@@ -13,23 +13,23 @@ CLUSTER_NAME="i2gw-test"
 SETUP_DONE="/tmp/.setup-complete"
 MANIFESTS_DIR="/opt/manifests"
 
-# Pre-pull images while doing other things (runs in background)
-pull_images() {
-  docker pull hashicorp/http-echo:0.2.3 &>/dev/null
-  docker pull docker.io/envoyproxy/gateway:v1.2.0 &>/dev/null
-  docker pull docker.io/envoyproxy/envoy:distroless-v1.32.3 &>/dev/null
+# Load pre-saved images into dind
+load_images() {
+  docker load -i /opt/images/http-echo.tar &>/dev/null
+  docker load -i /opt/images/envoy-gateway.tar &>/dev/null
+  docker load -i /opt/images/envoy.tar &>/dev/null
 }
 
 if ! kind get clusters 2>/dev/null | grep -q "${CLUSTER_NAME}"; then
-  echo "Pre-pulling images..."
-  pull_images &
-  PULL_PID=$!
+  echo "Loading images..."
+  load_images &
+  LOAD_PID=$!
 
   echo "Creating KinD cluster..."
   kind create cluster --name "${CLUSTER_NAME}" --config="${MANIFESTS_DIR}/kind-config.yaml"
 
-  # Wait for image pulls to complete
-  wait $PULL_PID 2>/dev/null || true
+  # Wait for image load to complete
+  wait $LOAD_PID 2>/dev/null || true
 
   # Load pre-pulled images into KinD (much faster than pulling inside)
   echo "Loading images into cluster..."
