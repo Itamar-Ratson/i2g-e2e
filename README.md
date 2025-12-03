@@ -24,18 +24,27 @@ bats /workspace/tests/e2e.bats
 
 Note: First container start takes ~2-3 min (cluster creation + Envoy Gateway install). Subsequent `exec` sessions are instant.
 
-## Test Structure
+## Directory Structure
 
 ```
-tests/
-├── test.bats              # Smoke tests
-├── e2e.bats               # Full e2e tests with traffic verification
-├── setup.sh               # Manual setup (auto-runs on first start)
-└── fixtures/
-    ├── simple-ingress.yaml
-    ├── multi-path-ingress.yaml
-    ├── canary-ingress.yaml        # Weight-based canary
-    └── header-canary-ingress.yaml # Header-based canary
+.
+├── docker-compose.yaml
+├── Dockerfile
+├── entrypoint.sh
+├── README.md
+├── manifests/
+│   ├── kind-config.yaml       # KinD cluster configuration
+│   ├── echo-services.yaml     # Echo server deployments
+│   └── gateway-class.yaml     # Envoy GatewayClass
+└── tests/
+    ├── e2e.bats               # Full e2e tests with traffic verification
+    ├── test.bats              # Smoke tests
+    ├── setup.sh               # Manual setup (auto-runs on first start)
+    └── fixtures/
+        ├── simple-ingress.yaml
+        ├── multi-path-ingress.yaml
+        ├── canary-ingress.yaml        # Weight-based canary
+        └── header-canary-ingress.yaml # Header-based canary
 ```
 
 ## Test Flow
@@ -60,8 +69,8 @@ bats /workspace/tests/
 
 ## Adding Tests
 
-1. Add fixture to `fixtures/`
-2. Add test case to `e2e.bats`
+1. Add fixture to `tests/fixtures/`
+2. Add test case to `tests/e2e.bats`
 3. Pattern: convert → apply → curl → verify
 
 ## Cleanup
